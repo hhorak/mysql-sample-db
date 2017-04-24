@@ -6,7 +6,7 @@ PID_FILE=/tmp/mysql.pid
 SOCKET_FILE=/tmp/mysql.sock
 LOG_FILE=/tmp/mysql.log
 DUMP_FILE=mysqlsampledatabase.sql
-PREFIX=$(which /usr/bin/mysqld_safe | sed -e 's|/bin/mysqld_safe$||')
+PREFIX=$(which mysqld_safe | sed -e 's|/bin/mysqld_safe$||')
 MYSQLD_BIN=${PREFIX}/libexec/mysqld
 
 action=${1}
