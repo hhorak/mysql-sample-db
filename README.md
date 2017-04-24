@@ -6,16 +6,16 @@ Database structure and data are taken from [mysqltutorial.org](http://www.mysqlt
 
 We have (or plan to have) the following versions available in corresponding branches:
 
- * [MySQL 5.1](@mysql-5.0)
- * [MySQL 5.1](@mysql-5.1)
- * [MySQL 5.1](@mysql-5.5)
- * [MySQL 5.1](@mysql-5.6)
- * [MySQL 5.1](@mysql-5.7)
- * [MySQL 5.1](@mariadb-5.3)
- * [MySQL 5.1](@mariadb-5.5)
- * [MySQL 5.1](@mariadb-10.0)
- * [MySQL 5.1](@mariadb-10.1)
- * [MySQL 5.1](@mariadb-10.2)
+ * [MySQL 5.0](../../tree/mysql-5.0)
+ * [MySQL 5.1](../../tree/mysql-5.1)
+ * [MySQL 5.5](../../tree/mysql-5.5)
+ * [MySQL 5.6](../../tree/mysql-5.6)
+ * [MySQL 5.7](../../tree/mysql-5.7)
+ * [MariaDB 5.3](../../tree/mariadb-5.3)
+ * [MariaDB 5.5](../../tree/mariadb-5.5)
+ * [MariaDB 10.0](../../tree/mariadb-10.0)
+ * [MariaDB 10.1](../../tree/mariadb-10.1)
+ * [MariaDB 10.2](../../tree/mariadb-10.2)
 
 Such data can be used for various tasks, for example testing upgrade.
 
