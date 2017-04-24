@@ -1,0 +1,90 @@
+#!/bin/bash
+
+THIS_DIR=$(dirname ${BASH_SOURCE[0]})
+MYSQLD_BIN=/usr/libexec/mysqld
+OUTPUT_DIR=${THIS_DIR}/data
+PID_FILE=/tmp/mysql.pid
+SOCKET_FILE=/tmp/mysql.sock
+LOG_FILE=/tmp/mysql.log
+DUMP_FILE=mysqlsampledatabase.sql
+
+action=${1}
+
+set -e
+
+rm -f ${LOG_FILE}
+touch ${LOG_FILE}
+
+usage() {
+  echo "Tool for generating and checking of MySQL/MariaDB data dir"
+  echo
+  echo "Usage: `basename $0` <action>"
+  echo
+  echo "Available actions:"
+  echo "  generate      Download and generate data, store them to ./data directory"
+  echo "  check         Check data in ./data directory with mysqlcheck"
+  exit 1
+}
+
+wait_for_mysql() {
+  while true; do
+    echo "Waiting for MySQL server to accept connections ..."
+    mysqladmin --socket=${SOCKET_FILE} ping &>/dev/null && echo "MySQL server is ready" && return 0
+    sleep 1
+  done
+}
+
+download_dump() {
+  echo "Downloading and unpacking data ..."
+  wget -O mysqldata.zip http://www.mysqltutorial.org/download/2
+  rm -rf ${PID_FILE} ${SOCKET_FILE} ${OUTPUT_DIR} ${DUMP_FILE}
+  unzip mysqldata.zip
+}
+
+init_data() {
+  echo "Initializing data ..."
+  /usr/bin/mysql_install_db --rpm --datadir=${OUTPUT_DIR} &>>${LOG_FILE}
+}
+
+start_local_server() {
+  echo "Running the server ..."
+  /usr/libexec/mysqld --datadir=${OUTPUT_DIR} --skip-networking --socket=${SOCKET_FILE} --pid-file=${PID_FILE} &>>${LOG_FILE} &
+  wait_for_mysql
+}
+
+load_data() {
+  echo "Creating data ..."
+  mysql --user root --socket=${SOCKET_FILE} <${DUMP_FILE}
+}
+
+check_data() {
+  echo "Checking data ..."
+  mysqlcheck --user root --socket=${SOCKET_FILE} --all-databases
+}
+
+stop_server() {
+  echo "Killing the server ..."
+  kill $(cat ${PID_FILE})
+}
+
+action_generate() {
+  download_dump
+  init_data
+  start_local_server
+  load_data
+  check_data
+  stop_server
+}
+
+action_check() {
+  start_local_server
+  check_data
+  stop_server
+}
+
+case ${action} in
+  generate) action_generate ;;
+  check) action_check ;;
+  *) usage ;;
+esac
+
