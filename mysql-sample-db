@@ -1,12 +1,13 @@
 #!/bin/bash
 
 THIS_DIR=$(dirname ${BASH_SOURCE[0]})
-MYSQLD_BIN=/usr/libexec/mysqld
 OUTPUT_DIR=${THIS_DIR}/data
 PID_FILE=/tmp/mysql.pid
 SOCKET_FILE=/tmp/mysql.sock
 LOG_FILE=/tmp/mysql.log
 DUMP_FILE=mysqlsampledatabase.sql
+PREFIX=$(which /usr/bin/mysqld_safe | sed -e 's|/bin/mysqld_safe$||')
+MYSQLD_BIN=${PREFIX}/libexec/mysqld
 
 action=${1}
 
@@ -43,12 +44,12 @@ download_dump() {
 
 init_data() {
   echo "Initializing data ..."
-  /usr/bin/mysql_install_db --rpm --datadir=${OUTPUT_DIR} &>>${LOG_FILE}
+  ${PREFIX}/bin/mysql_install_db --rpm --datadir=${OUTPUT_DIR} &>>${LOG_FILE}
 }
 
 start_local_server() {
   echo "Running the server ..."
-  /usr/libexec/mysqld --datadir=${OUTPUT_DIR} --skip-networking --socket=${SOCKET_FILE} --pid-file=${PID_FILE} &>>${LOG_FILE} &
+  ${MYSQLD_BIN} --datadir=${OUTPUT_DIR} --skip-networking --socket=${SOCKET_FILE} --pid-file=${PID_FILE} &>>${LOG_FILE} &
   wait_for_mysql
 }
 
